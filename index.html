@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WB Peak Area · V1</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">LOCAL · NO UPLOAD</p><h1>WB 灰度值（Peak Area）</h1><p>横向框选整排条带，输入泳道数，检查并拖动峰间分隔线。</p></header>
+    <section class="notice"><strong>验证状态：</strong>本原型已按 ImageJ GelAnalyzer 的 profile 反相与 Wand 面积公式设计；背景校正与最终 Area <b>尚未用真实 ImageJ 逐像素/逐 Lane 验证</b>，不能作为 ImageJ 等价结果使用。</section>
+    <section class="grid">
+      <article class="card image-card">
+        <div class="card-head"><h2>1. 图像与 ROI</h2><label class="file">上传图片<input id="fileInput" type="file" accept="image/*" /></label></div>
+        <div class="toolbar"><button id="originalBtn" class="active">Original</button><button id="processedBtn">Processed</button><label class="angle-control" title="正数顺时针，负数逆时针"><input id="angleInput" type="number" min="-180" max="180" step="0.1" value="0" />°</label><button id="rotateBtn">应用旋转</button><span id="imageMeta">尚未上传</span></div>
+        <canvas id="imageCanvas" aria-label="WB 图像与 ROI"></canvas>
+        <p class="hint">支持点击、拖拽及 Ctrl + V 粘贴上传。旋转角度正数为顺时针、负数为逆时针；旋转后重新框选 ROI。在图中按住并拖动即可重画 ROI。所有定量使用旋转后的原始像素矩阵。</p>
+      </article>
+      <article class="card controls">
+        <h2>2. 分析</h2><label>泳道数量<input id="laneCount" type="number" min="1" max="100" value="6" /></label><label>背景处理<select id="backgroundMode"><option value="none" selected>不扣除背景（默认）</option><option value="subtract">扣除背景（50 px，实验性）</option></select></label>
+        <button id="analyzeBtn" class="primary">分析整排</button>
+        <dl><dt>默认定量</dt><dd>原始 8-bit 图像，不扣除背景</dd><dt>可选背景校正</dt><dd>近似 rolling background · 50 px</dd><dt>输出</dt><dd>ImageJ-style raster peak area</dd></dl>
+        <p class="warning">背景扣除模式尚未完成与 ImageJ 的逐像素验证。此版本不把弱条带删除；无显著峰时保留预期泳道中心。</p>
+      </article>
+    </section>
+    <section class="card plot-card"><div class="card-head"><h2>3. Plot Lanes</h2><span id="plotStatus">上传并框选图像后开始</span></div><canvas id="plotCanvas" aria-label="Gel profile"></canvas><p class="hint">橙色竖线是可拖动 divider；拖动后 Area 实时更新。蓝色短线为每个泳道的中心。</p></section>
+    <section class="card results"><div class="card-head"><h2>4. Results</h2><div><button id="copyValuesBtn">复制数值</button><button id="copyTableBtn">复制表格</button><button id="csvBtn">导出 CSV</button></div></div><table><thead><tr><th>Lane</th><th>Area</th><th>Signal</th></tr></thead><tbody id="resultsBody"><tr><td colspan="3">尚无结果</td></tr></tbody></table></section>
+  </main>
+  <script src="./vendor/UTIF.js"></script>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
